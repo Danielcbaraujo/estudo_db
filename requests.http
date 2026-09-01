@@ -1,0 +1,14 @@
+### Todos os produtos
+GET http://localhost:3000/products
+
+### Produtos acima de 100
+GET http://localhost:3000/products?minPrice=100
+
+### Produtos acima de 1000
+GET http://localhost:3000/products?minPrice=1000
+
+### minPrice inválido
+GET http://localhost:3000/products?minPrice=abc
+
+### Preço negativo
+GET http://localhost:3000/products?minPrice=-100
