@@ -1,3 +1,7 @@
+### ========================================
+### GET - BUSCAR PRODUTOS
+### ========================================
+
 ### Todos os produtos
 GET http://localhost:3000/products
 
@@ -7,8 +11,152 @@ GET http://localhost:3000/products?minPrice=100
 ### Produtos acima de 1000
 GET http://localhost:3000/products?minPrice=1000
 
+### Produtos até 500
+GET http://localhost:3000/products?maxPrice=500
+
+### Produtos entre 100 e 500
+GET http://localhost:3000/products?minPrice=100&maxPrice=500
+
+### Produtos entre 1000 e 500
+GET http://localhost:3000/products?minPrice=1000&maxPrice=500
+
+### ========================================
+### GET - VALIDAÇÃO DOS FILTROS
+### ========================================
+
 ### minPrice inválido
 GET http://localhost:3000/products?minPrice=abc
 
-### Preço negativo
+### maxPrice inválido
+GET http://localhost:3000/products?maxPrice=abc
+
+### minPrice vazio
+GET http://localhost:3000/products?minPrice=
+
+### maxPrice vazio
+GET http://localhost:3000/products?maxPrice=
+
+### minPrice negativo
 GET http://localhost:3000/products?minPrice=-100
+
+### maxPrice negativo
+GET http://localhost:3000/products?maxPrice=-100
+
+
+### ========================================
+### POST - CRIAR PRODUTO
+### ========================================
+
+### Criar produto
+POST http://localhost:3000/products
+Content-Type: application/json
+
+{
+    "name": "Mouse",
+    "price": 6000
+}
+
+### Criar produto com preço negativo
+POST http://localhost:3000/products
+Content-Type: application/json
+
+{
+    "name": "Mouse",
+    "price": -40
+}
+
+### Criar produto com preço em string
+POST http://localhost:3000/products
+Content-Type: application/json
+
+{
+    "name": "Mouse",
+    "price": "80"
+}
+
+### Nome vazio
+POST http://localhost:3000/products
+Content-Type: application/json
+
+{
+    "name": "",
+    "price": 80
+}
+
+### Preço zero
+POST http://localhost:3000/products
+Content-Type: application/json
+
+{
+    "name": "Mouse",
+    "price": 0
+}
+
+### Preço inválido
+POST http://localhost:3000/products
+Content-Type: application/json
+
+{
+    "name": "Mouse",
+    "price": "abc"
+}
+
+
+### ========================================
+### PUT - ATUALIZAR PRODUTO
+### ========================================
+
+### Atualizar produto existente
+PUT http://localhost:3000/products/3
+Content-Type: application/json
+
+{
+    "name": "Teclado Gamer",
+    "price": 250
+}
+
+### Atualizar produto inexistente
+PUT http://localhost:3000/products/999
+Content-Type: application/json
+
+{
+    "name": "Produto Teste",
+    "price": 100
+}
+
+### ID inválido
+PUT http://localhost:3000/products/abc
+Content-Type: application/json
+
+{
+    "name": "Produto Teste",
+    "price": 100
+}
+
+
+### ========================================
+### DELETE - DELETAR PRODUTO
+### ========================================
+
+### Deletar produto existente
+DELETE http://localhost:3000/products/5
+
+### Deletar produto inexistente
+DELETE http://localhost:3000/products/999
+
+### ID inválido
+DELETE http://localhost:3000/products/abc
+
+
+### ========================================
+### GET - BUSCAR POR ID
+### ========================================
+
+### Buscar produto existente
+GET http://localhost:3000/products/3
+
+### Buscar produto inexistente
+GET http://localhost:3000/products/999
+
+### ID inválido
+GET http://localhost:3000/products/abc
