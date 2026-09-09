@@ -20,10 +20,6 @@ async function findAll(minPrice, maxPrice) {
   }
 
   if (minPrice !== undefined && maxPrice !== undefined) {
-    if (minPrice > maxPrice) {
-      throw new Error("O preço mínimo não pode ser maior que o preço máximo");
-    }
-
     return productsRepository.findByPriceRange(minPrice, maxPrice);
   }
 }
@@ -69,3 +65,4 @@ module.exports = {
   update,
   remove,
 };
+
