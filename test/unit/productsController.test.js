@@ -134,6 +134,156 @@ test("deve retornar produtos quando apenas maxPrice for informado", async () => 
   expect(res.json).toHaveBeenCalledWith(products);
 });
 
+test("deve retornar produtos quando minPrice e maxPrice forem informados", async () => {
+  const products = [
+    {
+      id: 2,
+      name: "Teclado",
+      price: "150.00",
+    },
+    {
+      id: 3,
+      name: "Monitor",
+      price: "500.00",
+    },
+  ];
+
+  productsService.findAll.mockResolvedValue(products);
+
+  const req = {
+    query: {
+      minPrice: "100",
+      maxPrice: "500",
+    },
+  };
+
+  const res = {
+    status: jest.fn().mockReturnThis(),
+    json: jest.fn(),
+  };
+
+  await productsController.findAll(req, res);
+
+  expect(productsService.findAll).toHaveBeenCalledWith(100, 500);
+
+  expect(res.status).toHaveBeenCalledWith(200);
+
+  expect(res.json).toHaveBeenCalledWith(products);
+});
+
+test("deve retornar 400 quando minPrice for inválido", async () => {
+  const req = {
+    query: {
+      minPrice: "abc",
+    },
+  };
+
+  const res = {
+    status: jest.fn().mockReturnThis(),
+    json: jest.fn(),
+  };
+
+  await productsController.findAll(req, res);
+
+  expect(res.status).toHaveBeenCalledWith(400);
+
+  expect(res.json).toHaveBeenCalledWith({
+    error: "minPrice deve ser um número",
+  });
+
+  expect(productsService.findAll).not.toHaveBeenCalled();
+});
+
+test("deve retornar 400 quando maxPrice for inválido", async () => {
+  const req = {
+    query: {
+      maxPrice: "abc",
+    },
+  };
+
+  const res = {
+    status: jest.fn().mockReturnThis(),
+    json: jest.fn(),
+  };
+  await productsController.findAll(req, res);
+
+  expect(res.status).toHaveBeenCalledWith(400);
+
+  expect(res.json).toHaveBeenCalledWith({
+    error: "maxPrice deve ser um número",
+  });
+
+  expect(productsService.findAll).not.toHaveBeenCalled();
+});
+
+test("deve retornar 400 quando minPrice for negativo", async () => {
+  const req = {
+    query: {
+      minPrice: "-10",
+    },
+  };
+
+  const res = {
+    status: jest.fn().mockReturnThis(),
+    json: jest.fn(),
+  };
+
+  await productsController.findAll(req, res);
+
+  expect(res.status).toHaveBeenCalledWith(400);
+
+  expect(res.json).toHaveBeenCalledWith({
+    error: "minPrice deve ser um número positivo",
+  });
+
+  expect(productsService.findAll).not.toHaveBeenCalled();
+});
+/////
+test("deve retornar 400 quando maxPrice for negativo", async () => {
+  const req = {
+    query: {
+      maxPrice: "-10",
+    },
+  };
+
+  const res = {
+    status: jest.fn().mockReturnThis(),
+    json: jest.fn(),
+  };
+
+  await productsController.findAll(req, res);
+
+  expect(res.status).toHaveBeenCalledWith(400);
+
+  expect(res.json).toHaveBeenCalledWith({
+    error: "maxPrice deve ser um número positivo",
+  });
+
+  expect(productsService.findAll).not.toHaveBeenCalled();
+});
+
+test("deve retornar 400 quando minPrice estiver vazio", async () => {
+  const req = {
+    query: {
+      minPrice: "",
+    },
+  };
+
+  const res = {
+    status: jest.fn().mockReturnThis(),
+    json: jest.fn(),
+  };
+
+  await productsController.findAll(req, res);
+
+  expect(res.status).toHaveBeenCalledWith(400);
+
+  expect(res.json).toHaveBeenCalledWith({
+    error: "minPrice deve ser um número",
+  });
+
+  expect(productsService.findAll).not.toHaveBeenCalled();
+});
 
 test("deve retornar 400 quando maxPrice estiver vazio", async () => {
   const req = {
@@ -158,6 +308,28 @@ test("deve retornar 400 quando maxPrice estiver vazio", async () => {
   expect(productsService.findAll).not.toHaveBeenCalled();
 });
 
+test("deve retornar 400 quando maxPrice não for um número", async () => {
+  const req = {
+    query: {
+      maxPrice: "abc",
+    },
+  };
+
+  const res = {
+    status: jest.fn().mockReturnThis(),
+    json: jest.fn(),
+  };
+
+  await productsController.findAll(req, res);
+
+  expect(res.status).toHaveBeenCalledWith(400);
+
+  expect(res.json).toHaveBeenCalledWith({
+    error: "maxPrice deve ser um número",
+  });
+
+  expect(productsService.findAll).not.toHaveBeenCalled();
+});
 
 //tests findById
 
