@@ -563,3 +563,306 @@ test("deve retornar 400 quando o service lançar erro", async () => {
     error: "Nome do produto é obrigatório",
   });
 });
+
+//tests update
+
+test("deve retornar 400 quando o ID não for válido", async () => {
+  const req = {
+    params: {
+      id: "abc",
+    },
+    body: {
+      name: "Mouse",
+      price: "80",
+    },
+  };
+
+  const res = {
+    status: jest.fn().mockReturnThis(),
+    json: jest.fn(),
+  };
+
+  await productsController.update(req, res);
+
+  expect(res.status).toHaveBeenCalledWith(400);
+
+  expect(res.json).toHaveBeenCalledWith({
+    error: "ID deve ser um número",
+  });
+
+  expect(productsService.update).not.toHaveBeenCalled();
+});
+
+test("deve retornar 400 quando name não for informado", async () => {
+  const req = {
+    params: {
+      id: "1",
+    },
+    body: {
+      price: 80,
+    },
+  };
+
+  const res = {
+    status: jest.fn().mockReturnThis(),
+    json: jest.fn(),
+  };
+
+  await productsController.update(req, res);
+
+  expect(res.status).toHaveBeenCalledWith(400);
+
+  expect(res.json).toHaveBeenCalledWith({
+    error: "name é obrigatório",
+  });
+
+  expect(productsService.update).not.toHaveBeenCalled();
+});
+
+test("deve retornar 400 quando o preço não for informado", async () => {
+  const req = {
+    params: {
+      id: "1",
+    },
+    body: {
+      name: "Mouse",
+    },
+  };
+
+  const res = {
+    status: jest.fn().mockReturnThis(),
+    json: jest.fn(),
+  };
+
+  await productsController.update(req, res);
+
+  expect(res.status).toHaveBeenCalledWith(400);
+
+  expect(res.json).toHaveBeenCalledWith({
+    error: "price é obrigatório",
+  });
+
+  expect(productsService.update).not.toHaveBeenCalled();
+});
+
+test("deve retornar 400 quando o preço não um numero", async () => {
+  const req = {
+    params: {
+      id: "1",
+    },
+    body: {
+      name: "Mouse",
+      price: "abc",
+    },
+  };
+
+  const res = {
+    status: jest.fn().mockReturnThis(),
+    json: jest.fn(),
+  };
+
+  await productsController.update(req, res);
+
+  expect(res.status).toHaveBeenCalledWith(400);
+
+  expect(res.json).toHaveBeenCalledWith({
+    error: "price deve ser um número",
+  });
+
+  expect(productsService.update).not.toHaveBeenCalled();
+});
+test("deve retornar 404 quando o produto não for encontrado", async () => {
+  const req = {
+    params: {
+      id: "999",
+    },
+    body: {
+      name: "Mouse",
+      price: "80",
+    },
+  };
+
+  const res = {
+    status: jest.fn().mockReturnThis(),
+    json: jest.fn(),
+  };
+
+  productsService.update.mockResolvedValue([]);
+
+  await productsController.update(req, res);
+
+  expect(res.status).toHaveBeenCalledWith(404);
+
+  expect(res.json).toHaveBeenCalledWith({
+    error: "Produto não encontrado",
+  });
+});
+
+test("deve retornar 200 quando o produto for atualizado", async () => {
+  const req = {
+    params: {
+      id: "1",
+    },
+    body: {
+      name: "Mouse",
+      price: "80",
+    },
+  };
+
+  const res = {
+    status: jest.fn().mockReturnThis(),
+    json: jest.fn(),
+  };
+
+  productsService.update.mockResolvedValue([
+    {
+      id: 1,
+      name: "Mouse",
+      price: 80,
+    },
+  ]);
+
+  await productsController.update(req, res);
+  expect(productsService.update).toHaveBeenCalledWith(1, "Mouse", 80);
+  expect(res.status).toHaveBeenCalledWith(200);
+  expect(res.json).toHaveBeenCalledWith([
+    {
+      id: 1,
+      name: "Mouse",
+      price: 80,
+    },
+  ]);
+});
+test("deve retornar 400 quando ocorrer erro ao atualizar", async () => {
+  const req = {
+    params: {
+      id: "1",
+    },
+    body: {
+      name: "Mouse",
+      price: "80",
+    },
+  };
+
+  const res = {
+    status: jest.fn().mockReturnThis(),
+    json: jest.fn(),
+  };
+
+  productsService.update.mockRejectedValue(
+    new Error("Erro ao atualizar produto"),
+  );
+
+  await productsController.update(req, res);
+
+  expect(res.status).toHaveBeenCalledWith(400);
+
+  expect(res.json).toHaveBeenCalledWith({
+    error: "Erro ao atualizar produto",
+  });
+});
+
+// test remove
+test("deve retornar 400 quando o ID não for válido", async () => {
+  const req = {
+    params: {
+      id: "abc",
+    },
+  };
+
+  const res = {
+    status: jest.fn().mockReturnThis(),
+    json: jest.fn(),
+  };
+
+  await productsController.remove(req, res);
+
+  expect(res.status).toHaveBeenCalledWith(400);
+
+  expect(res.json).toHaveBeenCalledWith({
+    error: "ID deve ser um número",
+  });
+
+  expect(productsService.remove).not.toHaveBeenCalled();
+});
+
+test("deve retornar 404 quando o produto não for encontrado", async () => {
+  const req = {
+    params: {
+      id: "999",
+    },
+  };
+
+  const res = {
+    status: jest.fn().mockReturnThis(),
+    json: jest.fn(),
+  };
+
+  productsService.remove.mockResolvedValue([]);
+
+  await productsController.remove(req, res);
+
+  expect(res.status).toHaveBeenCalledWith(404);
+
+  expect(res.json).toHaveBeenCalledWith({
+    error: "Produto não encontrado",
+  });
+
+  expect(productsService.remove).toHaveBeenCalledWith(999);
+});
+
+test("deve retornar 200 quando o produto for removido", async () => {
+  const req = {
+    params: {
+      id: "1",
+    },
+  };
+
+  const res = {
+    status: jest.fn().mockReturnThis(),
+    json: jest.fn(),
+  };
+
+  productsService.remove.mockResolvedValue([
+    {
+      id: 1,
+      name: "Mouse",
+      price: 80,
+    },
+  ]);
+
+  await productsController.remove(req, res);
+
+  expect(productsService.remove).toHaveBeenCalledWith(1);
+
+  expect(res.status).toHaveBeenCalledWith(200);
+
+  expect(res.json).toHaveBeenCalledWith({
+    message: "Produto foi deletado",
+  });
+});
+
+test("deve retornar 500 quando acontecer erro no servidor", async () => {
+  const req = {
+    params: {
+      id: "1",
+    },
+  };
+
+  const res = {
+    status: jest.fn().mockReturnThis(),
+    json: jest.fn(),
+  };
+
+  productsService.remove.mockRejectedValue(
+    new Error("Erro interno do servidor"),
+  );
+
+  await productsController.remove(req, res);
+
+  expect(productsService.remove).toHaveBeenCalledWith(1);
+  expect(res.status).toHaveBeenCalledWith(500);
+  expect(res.json).toHaveBeenCalledWith({
+    error: "Erro interno do servidor",
+  });
+});
